@@ -31,10 +31,7 @@ preload: function () {
     this.enemy.anchor.setTo(0.5,0.5);
     this.physics.enable(this.enemy, Phaser.Physics.ARCADE);
 
-    this.bullet = this.add.sprite(512, 400, 'bullet');
-    this.bullet.anchor.setTo(0.5,0.5);
-    this.physics.enable(this.bullet, Phaser.Physics.ARCADE); 
-    this.bullet.body.velocity.y = -400;
+    this.bullets = [];
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -42,9 +39,10 @@ preload: function () {
 
   update: function () {
    this.sea.tilePosition.y += 0.2;
-   this.physics.arcade.overlap(
-      this.bullet, this.enemy, this.enemyHit, null, this
-    );
+   for (var i = 0; i < this.bullets.length; i++) {
+      this.physics.arcade.overlap(
+        this.bullets[i], this.enemy, this.enemyHit, null, this
+      );
 
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
@@ -64,7 +62,11 @@ preload: function () {
 this.game.physics.arcade.distanceToPointer(this.player) > 15) {
       this.game.physics.arcade.moveToPointer(this.player, this.player.speed);
 }
-
+  
+  if (this.input.keyboard.isDown(Phaser.Keyboard.Z) ||
+        this.input.activePointer.isDown) {
+      this.fire();
+    }
 
   },
 
@@ -82,6 +84,15 @@ enemyHit: function (bullet, enemy) {
   explosion.animations.add('boom');
   explosion.play('boom', 15, false, true);
 },
+
+fire: function(){
+  var bullet = this.add.sprite(this.player.x, this.player.y - 20, 'bullet'); 
+  bullet.anchor.setTo(0.5, 0.5);
+this.physics.enable(bullet, Phaser.Physics.ARCADE); 
+bullet.body.velocity.y = -500;
+this.bullets.push(bullet);
+}
+
 
   quitGame: function (pointer) {
 
