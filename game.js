@@ -56,6 +56,7 @@ setupEnemies: function () {
   this.enemyPool.setAll('anchor.y', 0.5);
   this.enemyPool.setAll('outOfBoundsKill', true);
   this.enemyPool.setAll('checkWorldBounds', true);
+  this.enemyPool.setAll('reward', 100, false, false, 0, true);
 
 // Set the animation for each sprite
   this.enemyPool.forEach(function (enemy) {
@@ -116,6 +117,13 @@ this.instructions = this.add.text( 510, 600,
 );
 this.instructions.anchor.setTo(0.5, 0.5); 
 this.instExpire = this.time.now + 10000;
+
+this.score = 0;
+    this.scoreText = this.add.text(
+      510, 30, '' + this.score,
+      { font: '20px monospace', fill: '#fff', align: 'center' }
+    );
+this.scoreText.anchor.setTo(0.5, 0.5);
 },
 
 // update()-related functions
@@ -200,7 +208,14 @@ explosion.body.velocity.y = sprite.body.velocity.y;
 damageEnemy: function (enemy, damage) { enemy.damage(damage);
 if (enemy.alive) {
 enemy.play('hit'); } else {
-this.explode(enemy); }
+this.explode(enemy); 
+this.addToScore(enemy.reward);
+}
+},
+
+addToScore: function (score) { 
+  this.score += score; 
+  this.scoreText.text = this.score;
 },
 
 
