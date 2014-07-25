@@ -24,6 +24,8 @@ preload: function () {
     this.player.speed = 300;
 
     this.player.body.collideWorldBounds = true;
+    // 20 x 20 pixel hitbox, centered a little bit higher than the center 
+    this.player.body.setSize(20, 20, 0, -5);
 
     this.enemyPool = this.add.group(); 
     this.enemyPool.enableBody = true; 
@@ -127,6 +129,7 @@ this.game.physics.arcade.distanceToPointer(this.player) > 15) {
   render: function() { 
     //this.game.debug.body(this.bullet); 
     //this.game.debug.body(this.enemy);
+    this.game.debug.body(this.player);
 },
 
 
@@ -154,8 +157,13 @@ playerHit: function (player, enemy) {
 
 
 fire: function(){
-  if (this.nextShotAt > this.time.now) {
+  if (!this.player.alive || this.nextShotAt > this.time.now) {
 return; }
+
+if (this.bulletPool.countDead() === 0) {
+      return;
+}
+
 this.nextShotAt = this.time.now + this.shotDelay;
   
   // Find the first dead bullet in the pool
