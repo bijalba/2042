@@ -19,6 +19,7 @@ preload: function () {
     this.setupEnemies();
     this.setupBullets();
     this.setupExplosions();
+    this.setupPlayerIcons();
     this.setupText();
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -39,6 +40,7 @@ preload: function () {
     this.player = this.add.sprite(400, 650, 'player');
     this.player.anchor.setTo(0.5, 0.5);
     this.player.animations.add('fly', [ 0, 1, 2 ], 20, true);
+    this.player.animations.add('ghost', [ 3, 0, 3, 1 ], 20, true);
     this.player.play('fly');
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.speed = 300;
@@ -109,6 +111,16 @@ explosion.animations.add('boom');
 });
 },
 
+setupPlayerIcons: function () { 
+  this.lives = this.add.group(); 
+  for (var i = 0; i < 3; i++) {
+    var life = this.lives.create(924 + (30 * i), 30, 'player'); 
+    life.scale.setTo(0.5, 0.5);
+    life.anchor.setTo(0.5, 0.5);
+  } 
+},
+
+
 setupText: function () {
 this.instructions = this.add.text( 510, 600,
     'Use Arrow Keys to Move, Press Z to Fire\n' +
@@ -127,6 +139,9 @@ this.scoreText.anchor.setTo(0.5, 0.5);
 },
 
 // update()-related functions
+
+
+
 
 checkCollisions: function () { 
   this.physics.arcade.overlap(
@@ -179,6 +194,11 @@ processDelayedEffects: function () {
   if (this.instructions.exists && this.time.now > this.instExpire) {
   this.instructions.destroy(); 
   }
+  if (this.ghostUntil && this.ghostUntil < this.time.now) {
+      this.ghostUntil = null;
+      this.player.play('fly');
+}
+
 },
 
 enemyHit: function (bullet, enemy) { 
@@ -187,10 +207,20 @@ enemyHit: function (bullet, enemy) {
 },
 
 playerHit: function (player, enemy) {
+  if (this.ghostUntil && this.ghostUntil > this.time.now) {
+    return; 
+  }
   // crashing into an enemy only deals 5 damage 
   this.damageEnemy(enemy, 5);
-  this.explode(player);
-  player.kill();
+  var life = this.lives.getFirstAlive(); 
+  if (life) {
+      life.kill();
+      this.ghostUntil = this.time.now + 3000;
+      this.player.play('ghost');
+    } else {
+      this.explode(player);
+      player.kill();
+}
 },
 
 explode: function (sprite) {
