@@ -31,7 +31,24 @@ preload: function () {
     this.enemy.anchor.setTo(0.5,0.5);
     this.physics.enable(this.enemy, Phaser.Physics.ARCADE);
 
-    this.bullets = [];
+    // Add an empty sprite group into our game 
+    this.bulletPool = this.add.group();
+    // Enable physics to the whole sprite group
+    this.bulletPool.enableBody = true;
+    this.bulletPool.physicsBodyType = Phaser.Physics.ARCADE;
+    // Add 100 'bullet' sprites in the group.
+    // By default this uses the first frame of the sprite sheet and 
+    // sets the initial state as non-existing (i.e. killed/dead) 
+    this.bulletPool.createMultiple(100, 'bullet');
+    // Sets anchors of all sprites
+    this.bulletPool.setAll('anchor.x', 0.5);
+    this.bulletPool.setAll('anchor.y', 0.5);
+    // Automatically kill the bullet sprites when they go out of bounds
+    this.bulletPool.setAll('outOfBoundsKill', true);
+    this.bulletPool.setAll('checkWorldBounds', true);
+
+
+
     this.nextShotAt = 0; this.shotDelay = 100;
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -49,11 +66,9 @@ this.instExpire = this.time.now + 10000;
 
   update: function () {
    this.sea.tilePosition.y += 0.2;
-   for (var i = 0; i < this.bullets.length; i++) {
-      this.physics.arcade.overlap(
-        this.bullets[i], this.enemy, this.enemyHit, null, this
-      );
-    }
+   this.physics.arcade.overlap(
+      this.bulletPool, this.enemy, this.enemyHit, null, this
+);
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -103,11 +118,12 @@ fire: function(){
   if (this.nextShotAt > this.time.now) {
 return; }
 this.nextShotAt = this.time.now + this.shotDelay;
-  var bullet = this.add.sprite(this.player.x, this.player.y - 20, 'bullet'); 
-  bullet.anchor.setTo(0.5, 0.5);
-this.physics.enable(bullet, Phaser.Physics.ARCADE); 
-bullet.body.velocity.y = -500;
-this.bullets.push(bullet);
+  
+  // Find the first dead bullet in the pool
+var bullet = this.bulletPool.getFirstExists(false);
+// Reset (revive) the sprite and place it in a new location
+    bullet.reset(this.player.x, this.player.y - 20);
+    bullet.body.velocity.y = -500;
 },
 
 
