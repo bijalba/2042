@@ -36,6 +36,15 @@ preload: function () {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
+    this.instructions = this.add.text( 510, 600,
+'Use Arrow Keys to Move, Press Z to Fire\n' + 'Tapping/clicking does both',
+{ font: '20px monospace', fill: '#fff', align: 'center' }
+);
+this.instructions.anchor.setTo(0.5, 0.5); 
+this.instExpire = this.time.now + 10000;
+
+
+
   },
 
   update: function () {
@@ -68,6 +77,10 @@ this.game.physics.arcade.distanceToPointer(this.player) > 15) {
         this.input.activePointer.isDown) {
       this.fire();
     }
+
+  if (this.instructions.exists && this.time.now > this.instExpire) { 
+    this.instructions.destroy();
+}
 
   },
 
