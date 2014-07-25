@@ -78,6 +78,9 @@ this.instExpire = this.time.now + 10000;
    this.physics.arcade.overlap(
       this.bulletPool, this.enemyPool, this.enemyHit, null, this
 );
+   this.physics.arcade.overlap(
+           this.player, this.enemyPool, this.playerHit, null, this
+);
 
 if (this.nextEnemyAt < this.time.now && this.enemyPool.countDead() > 0) { this.nextEnemyAt = this.time.now + this.enemyDelay;
 var enemy = this.enemyPool.getFirstExists(false);
@@ -135,6 +138,20 @@ enemyHit: function (bullet, enemy) {
   explosion.animations.add('boom');
   explosion.play('boom', 15, false, true);
 },
+
+playerHit: function (player, enemy) {
+  enemy.kill();
+  var explosion = this.add.sprite(player.x, player.y, 'explosion');
+  explosion.anchor.setTo(0.5, 0.5);
+  explosion.animations.add('boom');
+  explosion.play('boom', 15, false, true);
+  player.kill();
+},
+
+
+
+
+
 
 fire: function(){
   if (this.nextShotAt > this.time.now) {
