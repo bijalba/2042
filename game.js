@@ -17,9 +17,11 @@ preload: function () {
     this.enemy = this.add.sprite(512,300,'greenEnemy');
     this.enemy.animations.add('fly', [0,1,2], 20, true);
     this.enemy.play('fly');
+    this.enemy.anchor.setTo(0.5,0.5);
 
     this.bullet = this.add.sprite(512, 400, 'bullet');
-
+    this.bullet.anchor.setTo(0.5,0.5);
+    
   },
 
   update: function () {
