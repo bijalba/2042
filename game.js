@@ -24,6 +24,8 @@ preload: function () {
     this.player.speed = 300;
 
     this.player.body.collideWorldBounds = true;
+    // 20 x 20 pixel hitbox, centered a little bit higher than the center 
+    this.player.body.setSize(20, 20, 0, -5);
 
     this.enemyPool = this.add.group(); 
     this.enemyPool.enableBody = true; 
@@ -78,6 +80,11 @@ this.instExpire = this.time.now + 10000;
    this.physics.arcade.overlap(
       this.bulletPool, this.enemyPool, this.enemyHit, null, this
 );
+
+this.physics.arcade.overlap(
+           this.player, this.enemyPool, this.playerHit, null, this
+);
+
 
 if (this.nextEnemyAt < this.time.now && this.enemyPool.countDead() > 0) { this.nextEnemyAt = this.time.now + this.enemyDelay;
 var enemy = this.enemyPool.getFirstExists(false);
@@ -136,9 +143,21 @@ enemyHit: function (bullet, enemy) {
   explosion.play('boom', 15, false, true);
 },
 
+playerHit: function (player, enemy) {
+enemy.kill();
+var explosion = this.add.sprite(player.x, player.y, 'explosion');
+explosion.anchor.setTo(0.5, 0.5);
+explosion.animations.add('boom');
+explosion.play('boom', 15, false, true);
+player.kill();
+},
+
 fire: function(){
-  if (this.nextShotAt > this.time.now) {
+  if (!this.player.alive || this.nextShotAt > this.time.now) {
 return; }
+
+if (this.bullets.countDead() == 0) { return;
+}
 this.nextShotAt = this.time.now + this.shotDelay;
   
   // Find the first dead bullet in the pool
