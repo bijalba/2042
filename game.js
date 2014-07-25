@@ -21,11 +21,12 @@ preload: function () {
 
     this.bullet = this.add.sprite(512, 400, 'bullet');
     this.bullet.anchor.setTo(0.5,0.5);
-    
+
   },
 
   update: function () {
    this.sea.tilePosition.y += 0.2;
+   this.bullet.y -= 1;
   },
 
   quitGame: function (pointer) {
