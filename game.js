@@ -60,9 +60,14 @@ setupEnemies: function () {
 // Set the animation for each sprite
   this.enemyPool.forEach(function (enemy) {
     enemy.animations.add('fly', [ 0, 1, 2 ], 20, true);
+    enemy.animations.add('hit', [ 3, 1, 3, 2 ], 20, false);
+    enemy.events.onAnimationComplete.add( function (e) {
+        e.play('fly');
+      }, this);
   });
   this.nextEnemyAt = 0;
   this.enemyDelay = 1000;
+  this.enemyInitialHealth = 2;
 },
 
 
@@ -129,7 +134,7 @@ spawnEnemies: function () {
 if (this.nextEnemyAt < this.time.now && this.enemyPool.countDead() > 0) {
 this.nextEnemyAt = this.time.now + this.enemyDelay;
 var enemy = this.enemyPool.getFirstExists(false); 
-enemy.reset(this.rnd.integerInRange(20, 1004), 0); 
+enemy.reset(this.rnd.integerInRange(20, 1004), 0, this.enemyInitialHealth);
 enemy.body.velocity.y = this.rnd.integerInRange(30, 60); 
 enemy.play('fly');
 } 
@@ -170,13 +175,12 @@ processDelayedEffects: function () {
 
 enemyHit: function (bullet, enemy) { 
   bullet.kill();
-  this.explode(enemy);
-  enemy.kill();
+  this.damageEnemy(enemy, 1);
 },
 
 playerHit: function (player, enemy) {
-  this.explode(enemy);
-  enemy.kill();
+  // crashing into an enemy only deals 5 damage 
+  this.damageEnemy(enemy, 5);
   this.explode(player);
   player.kill();
 },
@@ -192,6 +196,13 @@ explosion.play('boom', 15, false, true);
 explosion.body.velocity.x = sprite.body.velocity.x;
 explosion.body.velocity.y = sprite.body.velocity.y;
 },
+
+damageEnemy: function (enemy, damage) { enemy.damage(damage);
+if (enemy.alive) {
+enemy.play('hit'); } else {
+this.explode(enemy); }
+},
+
 
 fire: function(){
   if (!this.player.alive || this.nextShotAt > this.time.now) {
