@@ -91,7 +91,7 @@ fire: function(){
 this.physics.enable(bullet, Phaser.Physics.ARCADE); 
 bullet.body.velocity.y = -500;
 this.bullets.push(bullet);
-}
+},
 
 
   quitGame: function (pointer) {
