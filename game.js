@@ -7,11 +7,17 @@ BasicGame.Game.prototype = {
 preload: function () {
           this.load.image('sea', 'assets/sea.png');
           this.load.image('bullet', 'assets/bullet.png');
+          this.load.spritesheet('greenEnemy', 'assets/enemy.png', 32, 32);
         },
 
   create: function () {
 
     this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
+    
+    this.enemy = this.add.sprite(512,300,'greenEnemy');
+    this.enemy.animations.add('fly', [0,1,2], 20, true);
+    this.enemy.play('fly');
+
     this.bullet = this.add.sprite(512, 400, 'bullet');
 
   },
