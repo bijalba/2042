@@ -29,11 +29,20 @@ preload: function () {
 
   update: function () {
    this.sea.tilePosition.y += 0.2;
+   this.physics.arcade.overlap(
+      this.bullet, this.enemy, this.enemyHit, null, this
+    );
   },
 
   render: function() { 
     this.game.debug.body(this.bullet); 
     this.game.debug.body(this.enemy);
+},
+
+
+enemyHit: function (bullet, enemy) { 
+  bullet.kill();
+  enemy.kill();
 },
 
   quitGame: function (pointer) {
