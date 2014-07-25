@@ -8,6 +8,7 @@ preload: function () {
           this.load.image('sea', 'assets/sea.png');
           this.load.image('bullet', 'assets/bullet.png');
           this.load.spritesheet('greenEnemy', 'assets/enemy.png', 32, 32);
+          this.load.spritesheet('explosion', 'assets/explosion.png', 32, 32);
         },
 
   create: function () {
@@ -35,14 +36,18 @@ preload: function () {
   },
 
   render: function() { 
-    this.game.debug.body(this.bullet); 
-    this.game.debug.body(this.enemy);
+    //this.game.debug.body(this.bullet); 
+    //this.game.debug.body(this.enemy);
 },
 
 
 enemyHit: function (bullet, enemy) { 
   bullet.kill();
   enemy.kill();
+  var explosion = this.add.sprite(enemy.x, enemy.y, 'explosion'); 
+  explosion.anchor.setTo(0.5, 0.5); 
+  explosion.animations.add('boom');
+  explosion.play('boom', 15, false, true);
 },
 
   quitGame: function (pointer) {
