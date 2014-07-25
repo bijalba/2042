@@ -22,11 +22,13 @@ preload: function () {
     this.bullet = this.add.sprite(512, 400, 'bullet');
     this.bullet.anchor.setTo(0.5,0.5);
 
+    this.physics.enable(this.bullet, Phaser.Physics.ARCADE); 
+    this.bullet.body.velocity.y = -400;
+
   },
 
   update: function () {
    this.sea.tilePosition.y += 0.2;
-   this.bullet.y -= 1;
   },
 
   quitGame: function (pointer) {
