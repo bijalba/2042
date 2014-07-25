@@ -43,7 +43,7 @@ preload: function () {
       this.physics.arcade.overlap(
         this.bullets[i], this.enemy, this.enemyHit, null, this
       );
-
+    }
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
