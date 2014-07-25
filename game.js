@@ -186,7 +186,11 @@ if (this.game.input.activePointer.isDown &&
 
 if (this.input.keyboard.isDown(Phaser.Keyboard.Z) || 
   this.input.activePointer.isDown) {
-  this.fire();   
+  if (this.returnText && this.returnText.exists) {
+        this.quitGame();
+      } else {
+        this.fire();
+      }   
   }
 },
 
@@ -198,7 +202,15 @@ processDelayedEffects: function () {
       this.ghostUntil = null;
       this.player.play('fly');
 }
-
+if (this.showReturn && this.time.now > this.showReturn) {
+           this.returnText = this.add.text(
+             512, 400,
+             'Press Z or Tap Game to go back to Main Menu',
+             { font: '16px sans-serif', fill: '#fff'}
+           );
+           this.returnText.anchor.setTo(0.5, 0.5);
+           this.showReturn = false;
+}
 },
 
 enemyHit: function (bullet, enemy) { 
@@ -220,6 +232,7 @@ playerHit: function (player, enemy) {
     } else {
       this.explode(player);
       player.kill();
+      his.displayEnd(false);
 }
 },
 
@@ -235,6 +248,20 @@ explosion.body.velocity.x = sprite.body.velocity.x;
 explosion.body.velocity.y = sprite.body.velocity.y;
 },
 
+displayEnd: function (win) {
+// you can't win and lose at the same time 
+if (this.endText && this.endText.exists) {
+return; }
+var msg = win ? 'You Win!!!' : 'Game Over!'; this.endText = this.add.text(
+      510, 320, msg,
+      { font: '72px serif', fill: '#fff' }
+    );
+this.endText.anchor.setTo(0.5, 0);
+this.showReturn = this.time.now + 2000;
+
+},
+
+
 damageEnemy: function (enemy, damage) { enemy.damage(damage);
 if (enemy.alive) {
 enemy.play('hit'); } else {
@@ -246,6 +273,10 @@ this.addToScore(enemy.reward);
 addToScore: function (score) { 
   this.score += score; 
   this.scoreText.text = this.score;
+  if (this.score >= 2000) {
+           this.enemyPool.destroy();
+           this.displayEnd(true);
+         }
 },
 
 
@@ -268,8 +299,17 @@ var bullet = this.bulletPool.getFirstExists(false);
 
   quitGame: function (pointer) {
 
-    //  Here you should destroy anything you no longer need.
-    //  Stop music, delete sprites, purge caches, free resources, all that good stuff.
+    // Here you should destroy anything you no longer need.
+// Stop music, delete sprites, purge caches, free resources, all that good stuff. 
+this.sea.destroy();
+this.player.destroy();
+this.enemyPool.destroy();
+this.bulletPool.destroy();
+this.explosionPool.destroy();
+this.instructions.destroy();
+this.scoreText.destroy();
+this.endText.destroy();
+this.returnText.destroy();
 
     //  Then let's go back to the main menu.
     this.state.start('MainMenu');
