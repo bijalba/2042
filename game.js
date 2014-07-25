@@ -18,10 +18,10 @@ preload: function () {
     this.enemy.animations.add('fly', [0,1,2], 20, true);
     this.enemy.play('fly');
     this.enemy.anchor.setTo(0.5,0.5);
+    this.physics.enable(this.enemy, Phaser.Physics.ARCADE);
 
     this.bullet = this.add.sprite(512, 400, 'bullet');
     this.bullet.anchor.setTo(0.5,0.5);
-
     this.physics.enable(this.bullet, Phaser.Physics.ARCADE); 
     this.bullet.body.velocity.y = -400;
 
@@ -30,6 +30,11 @@ preload: function () {
   update: function () {
    this.sea.tilePosition.y += 0.2;
   },
+
+  render: function() { 
+    this.game.debug.body(this.bullet); 
+    this.game.debug.body(this.enemy);
+},
 
   quitGame: function (pointer) {
 
