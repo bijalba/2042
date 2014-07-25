@@ -9,12 +9,20 @@ preload: function () {
           this.load.image('bullet', 'assets/bullet.png');
           this.load.spritesheet('greenEnemy', 'assets/enemy.png', 32, 32);
           this.load.spritesheet('explosion', 'assets/explosion.png', 32, 32);
+          this.load.spritesheet('player', 'assets/player.png', 64, 64);
         },
 
   create: function () {
 
     this.sea = this.add.tileSprite(0, 0, 1024, 768, 'sea');
     
+    this.player = this.add.sprite(400, 650, 'player');
+    this.player.anchor.setTo(0.5, 0.5);
+    this.player.animations.add('fly', [ 0, 1, 2 ], 20, true);
+    this.player.play('fly');
+    this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
+    this.player.speed = 300;
+
     this.enemy = this.add.sprite(512,300,'greenEnemy');
     this.enemy.animations.add('fly', [0,1,2], 20, true);
     this.enemy.play('fly');
@@ -25,6 +33,8 @@ preload: function () {
     this.bullet.anchor.setTo(0.5,0.5);
     this.physics.enable(this.bullet, Phaser.Physics.ARCADE); 
     this.bullet.body.velocity.y = -400;
+
+    this.cursors = this.input.keyboard.createCursorKeys();
 
   },
 
