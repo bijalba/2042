@@ -32,6 +32,7 @@ preload: function () {
     this.physics.enable(this.enemy, Phaser.Physics.ARCADE);
 
     this.bullets = [];
+    this.nextShotAt = 0; this.shotDelay = 100;
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -86,6 +87,9 @@ enemyHit: function (bullet, enemy) {
 },
 
 fire: function(){
+  if (this.nextShotAt > this.time.now) {
+return; }
+this.nextShotAt = this.time.now + this.shotDelay;
   var bullet = this.add.sprite(this.player.x, this.player.y - 20, 'bullet'); 
   bullet.anchor.setTo(0.5, 0.5);
 this.physics.enable(bullet, Phaser.Physics.ARCADE); 
